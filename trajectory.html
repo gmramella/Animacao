@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="js1/Animation.js"></script>
+<script src="js1/Movement.js"></script>
+<script src="js1/Shape.js"></script>
+<script src="js1/Utils.js"></script>
+</head>
+<body>
+<form id="inputs">
+	Constant Linear Circle Start:<input type="text" id="constantLinearCircleStartX" value=""/><input type="text" id="constantLinearCircleStartY" value="Mouse"/>Constant Linear Circle End  :<input type="text" id="constantLinearCircleEndX" value=""/><input type="text" id="constantLinearCircleEndY" value="Mouse"/><br/>
+	Constant Circular Circle Start:<input type="text" id="constantCircularCircleStartX" value=""/>Constant Circular Circle End  :<input type="text" id="constantCircularCircleStartY" value=""/><br/>
+	Constant Spiral Circle Start:<input type="text" id="constantSpiralCircleStartX" value=""/>Constant Spiral Circle End  :<input type="text" id="constantSpiralCircleStartY" value=""/><br/>
+	Constant Bezier Circle Start:<input type="text" id="constantBezierCircleP0X" value=""/><input type="text" id="constantBezierCircleP0Y" value="Mouse"/>Constant Bezier Circle End  :<input type="text" id="constantBezierCircleP1X" value=""/><input type="text" id="constantBezierCircleP1Y" value="Mouse"/><br/>
+	Constant Bezier Circle Start:<input type="text" id="constantBezierCircleP2X" value=""/><input type="text" id="constantBezierCircleP2Y" value="Mouse"/>Constant Bezier Circle End  :<input type="text" id="constantBezierCircleP3X" value=""/><input type="text" id="constantBezierCircleP3Y" value="Mouse"/><br/>
+	<br/>
+	Constant Linear Triangle Start:<input type="text" id="constantLinearTriangleStartX" value=""/><input type="text" id="constantLinearTriangleStartY" value="Mouse"/>Constant Linear Triangle End  :<input type="text" id="constantLinearTriangleEndX" value=""/><input type="text" id="constantLinearTriangleEndY" value="Mouse"/><br/>
+	Constant Circular Triangle Start:<input type="text" id="constantCircularTriangleStartX" value=""/>Constant Circular Triangle End  :<input type="text" id="constantCircularTriangleStartY" value=""/><br/>
+	Constant Spiral Triangle Start:<input type="text" id="constantSpiralTriangleStartX" value=""/>Constant Spiral Triangle End  :<input type="text" id="constantSpiralTriangleStartY" value=""/><br/>
+	Constant Bezier Triangle Start:<input type="text" id="constantBezierTriangleP0X" value=""/><input type="text" id="constantBezierTriangleP0Y" value="Mouse"/>Constant Bezier Triangle End  :<input type="text" id="constantBezierTriangleP1X" value=""/><input type="text" id="constantBezierTriangleP1Y" value="Mouse"/><br/>
+	Constant Bezier Triangle Start:<input type="text" id="constantBezierTriangleP2X" value=""/><input type="text" id="constantBezierTriangleP2Y" value="Mouse"/>Constant Bezier Triangle End  :<input type="text" id="constantBezierTriangleP3X" value=""/><input type="text" id="constantBezierTriangleP3Y" value="Mouse"/><br/>
+	<input type="submit" value="Submit" onclick="runAnimationConstant();"/>
+	<br/>
+	Accelerated Linear Circle Start:<input type="text" id="acceleratedLinearCircleStartX" value=""/><input type="text" id="acceleratedLinearCircleStartY" value="Mouse"/>Accelerated Linear Circle End  :<input type="text" id="acceleratedLinearCircleEndX" value=""/><input type="text" id="acceleratedLinearCircleEndY" value="Mouse"/><br/>
+	Accelerated Circular Circle Start:<input type="text" id="acceleratedCircularCircleStartX" value=""/>Accelerated Circular Circle End  :<input type="text" id="acceleratedCircularCircleStartY" value=""/><br/>
+	Accelerated Spiral Circle Start:<input type="text" id="acceleratedSpiralCircleStartX" value=""/>Accelerated Spiral Circle End  :<input type="text" id="acceleratedSpiralCircleStartY" value=""/><br/>
+	Accelerated Bezier Circle Start:<input type="text" id="acceleratedBezierCircleP0X" value=""/><input type="text" id="acceleratedBezierCircleP0Y" value="Mouse"/>Accelerated Bezier Circle End  :<input type="text" id="acceleratedBezierCircleP1X" value=""/><input type="text" id="acceleratedBezierCircleP1Y" value="Mouse"/><br/>
+	Accelerated Bezier Circle Start:<input type="text" id="acceleratedBezierCircleP2X" value=""/><input type="text" id="acceleratedBezierCircleP2Y" value="Mouse"/>Accelerated Bezier Circle End  :<input type="text" id="acceleratedBezierCircleP3X" value=""/><input type="text" id="acceleratedBezierCircleP3Y" value="Mouse"/><br/>
+	<br/>
+	Accelerated Linear Triangle Start:<input type="text" id="acceleratedLinearTriangleStartX" value=""/><input type="text" id="acceleratedLinearTriangleStartY" value="Mouse"/>Accelerated Linear Triangle End  :<input type="text" id="acceleratedLinearTriangleEndX" value=""/><input type="text" id="acceleratedLinearTriangleEndY" value="Mouse"/><br/>
+	Accelerated Circular Triangle Start:<input type="text" id="acceleratedCircularTriangleStartX" value=""/>Accelerated Circular Triangle End  :<input type="text" id="acceleratedCircularTriangleStartY" value=""/><br/>
+	Accelerated Spiral Triangle Start:<input type="text" id="acceleratedSpiralTriangleStartX" value=""/>Accelerated Spiral Triangle End  :<input type="text" id="acceleratedSpiralTriangleStartY" value=""/><br/>
+	Accelerated Bezier Triangle Start:<input type="text" id="acceleratedBezierTriangleP0X" value=""/><input type="text" id="acceleratedBezierTriangleP0Y" value="Mouse"/>Accelerated Bezier Triangle End  :<input type="text" id="acceleratedBezierTriangleP1X" value=""/><input type="text" id="acceleratedBezierTriangleP1Y" value="Mouse"/><br/>
+	Accelerated Bezier Triangle Start:<input type="text" id="acceleratedBezierTriangleP2X" value=""/><input type="text" id="acceleratedBezierTriangleP2Y" value="Mouse"/>Accelerated Bezier Triangle End  :<input type="text" id="acceleratedBezierTriangleP3X" value=""/><input type="text" id="acceleratedBezierTriangleP3Y" value="Mouse"/><br/>
+	<input type="submit" value="Submit" onclick="runAnimationAccelerated();"/>
+</form>
+<script>
+	$('#inputs').submit(function(e){
+		e.preventDefault();
+		$.ajax({
+			url:'/'
+		});
+	});
+	
+	document.getElementById("constantLinearCircleStartX").value = 100;
+	document.getElementById("constantLinearCircleStartY").value = 100;
+	document.getElementById("constantLinearCircleEndX").value = 200;
+	document.getElementById("constantLinearCircleEndY").value = 200;
+	
+	document.getElementById("constantCircularCircleStartX").value = 300;
+	document.getElementById("constantCircularCircleStartY").value = 100;
+	
+	document.getElementById("constantSpiralCircleStartX").value = 500;
+	document.getElementById("constantSpiralCircleStartY").value = 100;
+	
+	document.getElementById("constantBezierCircleP0X").value = 700;
+	document.getElementById("constantBezierCircleP0Y").value = 100;
+	document.getElementById("constantBezierCircleP1X").value = 730;
+	document.getElementById("constantBezierCircleP1Y").value = 200;
+	document.getElementById("constantBezierCircleP2X").value = 760;
+	document.getElementById("constantBezierCircleP2Y").value = 200;
+	document.getElementById("constantBezierCircleP3X").value = 790;
+	document.getElementById("constantBezierCircleP3Y").value = 100;
+	
+	document.getElementById("constantLinearTriangleStartX").value = 100;
+	document.getElementById("constantLinearTriangleStartY").value = 300;
+	document.getElementById("constantLinearTriangleEndX").value = 200;
+	document.getElementById("constantLinearTriangleEndY").value = 400;
+	
+	document.getElementById("constantCircularTriangleStartX").value = 300;
+	document.getElementById("constantCircularTriangleStartY").value = 300;
+	
+	document.getElementById("constantSpiralTriangleStartX").value = 500;
+	document.getElementById("constantSpiralTriangleStartY").value = 300;
+	
+	document.getElementById("constantBezierTriangleP0X").value = 700;
+	document.getElementById("constantBezierTriangleP0Y").value = 300;
+	document.getElementById("constantBezierTriangleP1X").value = 730;
+	document.getElementById("constantBezierTriangleP1Y").value = 400;
+	document.getElementById("constantBezierTriangleP2X").value = 760;
+	document.getElementById("constantBezierTriangleP2Y").value = 400;
+	document.getElementById("constantBezierTriangleP3X").value = 790;
+	document.getElementById("constantBezierTriangleP3Y").value = 300;
+	
+	document.getElementById("acceleratedLinearCircleStartX").value = 100;
+	document.getElementById("acceleratedLinearCircleStartY").value = 100;
+	document.getElementById("acceleratedLinearCircleEndX").value = 200;
+	document.getElementById("acceleratedLinearCircleEndY").value = 200;
+	
+	document.getElementById("acceleratedCircularCircleStartX").value = 300;
+	document.getElementById("acceleratedCircularCircleStartY").value = 100;
+	
+	document.getElementById("acceleratedSpiralCircleStartX").value = 500;
+	document.getElementById("acceleratedSpiralCircleStartY").value = 100;
+	
+	document.getElementById("acceleratedBezierCircleP0X").value = 700;
+	document.getElementById("acceleratedBezierCircleP0Y").value = 100;
+	document.getElementById("acceleratedBezierCircleP1X").value = 730;
+	document.getElementById("acceleratedBezierCircleP1Y").value = 200;
+	document.getElementById("acceleratedBezierCircleP2X").value = 760;
+	document.getElementById("acceleratedBezierCircleP2Y").value = 200;
+	document.getElementById("acceleratedBezierCircleP3X").value = 790;
+	document.getElementById("acceleratedBezierCircleP3Y").value = 100;
+	
+	document.getElementById("acceleratedLinearTriangleStartX").value = 100;
+	document.getElementById("acceleratedLinearTriangleStartY").value = 300;
+	document.getElementById("acceleratedLinearTriangleEndX").value = 200;
+	document.getElementById("acceleratedLinearTriangleEndY").value = 400;
+	
+	document.getElementById("acceleratedCircularTriangleStartX").value = 300;
+	document.getElementById("acceleratedCircularTriangleStartY").value = 300;
+	
+	document.getElementById("acceleratedSpiralTriangleStartX").value = 500;
+	document.getElementById("acceleratedSpiralTriangleStartY").value = 300;
+	
+	document.getElementById("acceleratedBezierTriangleP0X").value = 700;
+	document.getElementById("acceleratedBezierTriangleP0Y").value = 300;
+	document.getElementById("acceleratedBezierTriangleP1X").value = 730;
+	document.getElementById("acceleratedBezierTriangleP1Y").value = 400;
+	document.getElementById("acceleratedBezierTriangleP2X").value = 760;
+	document.getElementById("acceleratedBezierTriangleP2Y").value = 400;
+	document.getElementById("acceleratedBezierTriangleP3X").value = 790;
+	document.getElementById("acceleratedBezierTriangleP3Y").value = 300;
+</script>
+<script>
+	var fps = 64;
+	var dt = 1 / fps;
+	
+	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	svg.setAttribute("width", 800);
+	svg.setAttribute("height", 600);
+	document.body.appendChild(svg);
+</script>
+</body>
+</html>

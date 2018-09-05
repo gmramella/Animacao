@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<script>
+	var width = 800;
+	var height = 600;
+	var fps = 64;
+	var dt = (1/fps);
+	
+	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	svg.setAttribute("width", width);
+	svg.setAttribute("height", height);
+	document.body.appendChild(svg);
+	
+	var r = 4;
+	var black = {r: 0, g: 0, b: 0};
+	var red = {r: 255, g: 0, b: 0};
+	var green = {r: 0, g: 255, b: 0};
+	var blue = {r: 0, g: 0, b: 255};
+	var yellow = {r: 255, g: 255, b: 0};
+	var alpha = 1;
+	var center = {x: width/2, y: height/2};
+	var radius = 100;
+	var period = 4;
+	var omega = 2 * Math.PI / period;
+	
+	function normalize(v) {
+		var length = Math.sqrt(v.x * v.x + v.y * v.y);
+		return {x: v.x / length, y: v.y / length};
+	}
+	
+	function cross(v) {
+		return {x: -v.y, y: v.x};
+	}
+	
+	function distance(u, v) {
+		return Math.sqrt(((v.x - u.x) * (v.x - u.x)) + ((v.y - u.y) * (v.y - u.y)));
+	}
+	
+	//optimization
+	function lengthSquared(v) {
+		return (v.x * v.x + v.y * v.y);
+	}
+	
+	function length(v) {
+		return Math.sqrt(v.x * v.x + v.y * v.y);
+	}
+	
+	function resultingVector(u, v) {
+		var uLength = Math.sqrt(u.x * u.x + u.y * u.y);
+		var vLength = Math.sqrt(v.x * v.x + v.y * v.y);
+		var uAngle = Math.atan2(u.y, u.x);
+		var vAngle = Math.atan2(v.y, v.x);
+		var udecomposed = {x: uLength * Math.cos(uAngle), y: uLength * Math.sin(uAngle)};
+		var vdecomposed = {x: vLength * Math.cos(vAngle), y: vLength * Math.sin(vAngle)};
+		return {x: udecomposed.x + vdecomposed.x, y: udecomposed.y + vdecomposed.y};
+	}
+	
+	function approx(val, what, err) {
+		return (what - err <= val && val <= what + err);
+	}
+	
+	function createCircle(id, position, r, color, alpha) {
+		var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		circle.setAttribute("id", id);
+		circle.setAttribute("cx", position.x);
+		circle.setAttribute("cy", position.y);
+		circle.setAttribute("r", r);
+		circle.setAttribute("fill", new String("rgb("+color.r+", "+color.g+", "+color.b+", "+alpha+")"));
+		circle.setAttribute("fill-opacity", alpha);
+		svg.appendChild(circle);
+		return circle;
+	}
+
+	function updateCircle(id, position, r, color, alpha) {
+		var circle = document.getElementById(id);
+		circle.setAttribute("cx", position.x);
+		circle.setAttribute("cy", position.y);
+		circle.setAttribute("r", r);
+		circle.setAttribute("fill", new String("rgb("+color.r+", "+color.g+", "+color.b+", "+alpha+")"));
+		circle.setAttribute("fill-opacity", alpha);
+	}
+	
+	function createLine(id, from, to, r, color, alpha) {
+		var circle = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		circle.setAttribute("id", id);
+		circle.setAttribute("x1", from.x);
+		circle.setAttribute("y1", from.y);
+		circle.setAttribute("x2", to.x);
+		circle.setAttribute("y2", to.y);
+		circle.setAttribute("stroke-width", r);
+		circle.setAttribute("stroke", new String("rgb("+color.r+", "+color.g+", "+color.b+", "+alpha+")"));
+		circle.setAttribute("fill-opacity", alpha);
+		svg.appendChild(circle);
+		return circle;
+	}
+
+	function updateLine(id, from, to, r, color, alpha) {
+		var circle = document.getElementById(id);
+		circle.setAttribute("x1", from.x);
+		circle.setAttribute("y1", from.y);
+		circle.setAttribute("x2", to.x);
+		circle.setAttribute("y2", to.y);
+		circle.setAttribute("stroke-width", r);
+		circle.setAttribute("stroke", new String("rgb("+color.r+", "+color.g+", "+color.b+", "+alpha+")"));
+		circle.setAttribute("fill-opacity", alpha);
+	}
+	
+	createCircle("center", center, r, {r: 255, g: 0, b: 0}, alpha);
+	
+	var initialAngle = 0 * Math.PI / 180;
+	
+	var initialPosition = {x: center.x + radius * Math.cos(initialAngle), y: center.y + radius * Math.sin(initialAngle)};
+	var initialVelocityDir = cross({x: Math.cos(initialAngle), y: Math.sin(initialAngle)});
+	var initialVelocitySpeed = omega * radius;//v=ωr
+	var initialVelocity = {x: initialVelocityDir.x * initialVelocitySpeed, y: initialVelocityDir.y * initialVelocitySpeed};
+	var initialCentripetalAccelerationDir = normalize({x: center.x - initialPosition.x, y: center.y - initialPosition.y});
+	var initialCentripetalAccelerationSpeed = omega * omega * radius;//ac=ω²r
+	var initialCentripetalAcceleration = {x: initialCentripetalAccelerationDir.x * initialCentripetalAccelerationSpeed, y: initialCentripetalAccelerationDir.y * initialCentripetalAccelerationSpeed};
+	var initialTangentialAccelerationDir = cross({x: Math.cos(initialAngle), y: Math.sin(initialAngle)});
+	var initialTangentialAccelerationSpeed = omega * radius;//at=ωr
+	var initialTangentialAcceleration = {x: initialTangentialAccelerationDir.x * initialTangentialAccelerationSpeed, y: initialTangentialAccelerationDir.y * initialTangentialAccelerationSpeed};
+	
+	var position = {x: initialPosition.x, y: initialPosition.y};
+	var velocityDir = {x: initialVelocityDir.x, y: initialVelocityDir.y};
+	var velocitySpeed = initialVelocitySpeed;
+	var velocity = {x: velocityDir.x * velocitySpeed, y: velocityDir.y * velocitySpeed};
+	var centripetalAccelerationDir = {x: initialCentripetalAccelerationDir.x, y: initialCentripetalAccelerationDir.y};
+	var centripetalAccelerationSpeed = initialCentripetalAccelerationSpeed;
+	var centripetalAcceleration = {x: centripetalAccelerationDir.x * centripetalAccelerationSpeed, y: centripetalAccelerationDir.y * centripetalAccelerationSpeed};
+	var tangentialAccelerationDir = {x: initialTangentialAccelerationDir.x, y: initialTangentialAccelerationDir.y};
+	var tangentialAccelerationSpeed = initialTangentialAccelerationSpeed;
+	var tangentialAcceleration = {x: tangentialAccelerationDir.x * tangentialAccelerationSpeed, y: tangentialAccelerationDir.y * tangentialAccelerationSpeed};
+	var decomposedResultingAcceleration = resultingVector(centripetalAcceleration, tangentialAcceleration);
+	
+	var circle = createCircle("circle", position, r, black, alpha);
+	var lineCen = createLine("lineCen", position, {x: position.x + centripetalAccelerationDir.x * centripetalAccelerationSpeed, y: position.y + centripetalAccelerationDir.y * centripetalAccelerationSpeed}, r, red, alpha);
+	var lineVel = createLine("lineVel", position, {x: position.x + velocityDir.x * velocitySpeed, y: position.y + velocityDir.y * velocitySpeed}, r, green, alpha);
+	var lineTan = createLine("lineTan", position, {x: position.x + tangentialAccelerationDir.x * tangentialAccelerationSpeed, y: position.y + tangentialAccelerationDir.y * tangentialAccelerationSpeed}, r, blue, alpha);
+	var lineRes = createLine("lineRes", position, {x: position.x + decomposedResultingAcceleration.x, y: position.y + decomposedResultingAcceleration.y}, r, yellow, alpha);
+	
+	var interval = setInterval(function(){
+		var prevAcceleration = {x: decomposedResultingAcceleration.x, y: decomposedResultingAcceleration.y};
+		centripetalAccelerationDir = normalize({x: center.x - position.x, y: center.y - position.y});
+		centripetalAcceleration = {x: centripetalAccelerationDir.x * centripetalAccelerationSpeed, y: centripetalAccelerationDir.y * centripetalAccelerationSpeed};
+		tangentialAccelerationDir = cross(centripetalAccelerationDir);
+		tangentialAcceleration = {x: tangentialAccelerationDir.x * tangentialAccelerationSpeed, y: tangentialAccelerationDir.y * tangentialAccelerationSpeed};
+		decomposedResultingAcceleration = resultingVector(centripetalAcceleration, tangentialAcceleration);
+		var nextAcceleration = {x: decomposedResultingAcceleration.x, y: decomposedResultingAcceleration.y};
+		
+		var prevVelocity = {x: velocity.x, y: velocity.y};
+		velocityDir = cross(centripetalAccelerationDir);
+		velocity = {x: velocityDir.x * length(decomposedResultingAcceleration), y: velocityDir.y * length(decomposedResultingAcceleration)};
+		var nextVelocity = {x: velocity.x, y: velocity.y};
+		
+		position.x += (prevVelocity.x+nextVelocity.x)/2*dt;
+		position.y += (prevVelocity.y+nextVelocity.y)/2*dt;
+		
+		createCircle("circle", position, r, black, alpha);
+		updateLine("lineCen", position, {x: position.x + centripetalAccelerationDir.x * centripetalAccelerationSpeed, y: position.y + centripetalAccelerationDir.y * centripetalAccelerationSpeed}, r, red, alpha);
+		updateLine("lineVel", position, {x: position.x + velocityDir.x * velocitySpeed, y: position.y + velocityDir.y * velocitySpeed}, r, green, alpha);
+		updateLine("lineTan", position, {x: position.x + tangentialAccelerationDir.x * tangentialAccelerationSpeed, y: position.y + tangentialAccelerationDir.y * tangentialAccelerationSpeed}, r, blue, alpha);
+		updateLine("lineRes", position, {x: position.x + decomposedResultingAcceleration.x, y: position.y + decomposedResultingAcceleration.y}, r, yellow, alpha);
+	}, 1000 * dt);
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<script>
+	var width = 800;
+	var height = 600;
+	var fps = 64;
+	var dt = (1/fps);
+	var duration = 10;
+	var starttime = new Date().getTime();
+	
+	var r = 4;
+	var color = {r: 0, g: 0, b: 0};
+	var alpha = 1;
+	
+	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	svg.setAttribute("width", width);
+	svg.setAttribute("height", height);
+	document.body.appendChild(svg);
+	
+	function createCircle(id, position, r, color, alpha) {
+		var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		circle.setAttribute("id", id);
+		circle.setAttribute("cx", position.x);
+		circle.setAttribute("cy", position.y);
+		circle.setAttribute("r", r);
+		circle.setAttribute("fill", new String("rgb("+color.r+", "+color.g+", "+color.b+", "+alpha+")"));
+		circle.setAttribute("fill-opacity", alpha);
+		svg.appendChild(circle);
+		return circle;
+	}
+
+	function updateCircle(id, position, r, color, alpha) {
+		var circle = document.getElementById(id);
+		circle.setAttribute("cx", position.x);
+		circle.setAttribute("cy", position.y);
+		circle.setAttribute("r", r);
+		circle.setAttribute("fill", new String("rgb("+color.r+", "+color.g+", "+color.b+", "+alpha+")"));
+		circle.setAttribute("fill-opacity", alpha);
+	}
+	
+	var initialVelocity = {x: 0, y: 0};
+	var initialPosition = {x: width / 2, y: height / 2};
+	
+	var acceleration = {x: 1, y: 0};
+	var velocity = {x: initialVelocity.x, y: initialVelocity.y};
+	var position = {x: initialPosition.x, y: initialPosition.y};
+	
+	var circle = createCircle("circle", position, r, color, alpha);
+	
+	var t = 0;
+	var interval = setInterval(function(){
+		if (new Date().getTime() - starttime >= duration * 1000) {
+			console.log(t, acceleration, velocity, position);
+			//v=v0+at, x=x0+v0t+at²/2
+			console.log(t, acceleration, {x: initialVelocity.x+acceleration.x*t, y: initialVelocity.y+acceleration.y*t}, {x: initialPosition.x+initialVelocity.x*t+acceleration.x*t*t/2, y: initialPosition.y+initialVelocity.y*t+acceleration.y*t*t/2});
+			clearInterval(interval);
+		}
+		//console.log(t, acceleration, velocity, position);
+		var prevVelocity = {x: velocity.x, y: velocity.y};
+		velocity.x += acceleration.x*dt;
+		velocity.y += acceleration.y*dt;
+		var nextVelocity = {x: velocity.x, y: velocity.y};
+		
+		position.x += (prevVelocity.x+nextVelocity.x)/2*dt;
+		position.y += (prevVelocity.y+nextVelocity.y)/2*dt;
+		createCircle("circle", position, r, color, alpha);
+		t+=dt;
+	}, 1000*dt);
+</script>
+</body>
+</html>

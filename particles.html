@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="js2/Shape.js"></script>
+<script src="js2/Particle.js"></script>
+<script src="js2/ParticleSystem.js"></script>
+<script src="js2/Vector.js"></script>
+<script src="js2/Input.js"></script>
+<script src="js2/Utils.js"></script>
+</head>
+<body>
+<script>
+	var width = 800;
+	var height = 600;
+	var fps = 64;
+	var dt = (1/fps);
+	
+	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	svg.setAttribute("width", width);
+	svg.setAttribute("height", height);
+	document.body.appendChild(svg);
+	
+	ps = null;
+	var color = {r: 0, g: 0, b: 0};
+	var shape = "circle";
+	var size = 4;
+	var trajectory = "linear";
+	var waves = 10;
+	var psCounter = 0;
+	var ps = 0;
+	var reset = true;
+	var emitter = "point";
+</script>
+</body>
+</html>

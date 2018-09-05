@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<script>
+	var width = 800;
+	var height = 600;
+	var fps = 64;
+	var dt = (1/fps);
+	var duration = 10;
+	var starttime = new Date().getTime();
+	
+	var r = 4;
+	var color = {r: 0, g: 0, b: 0};
+	var alpha = 1;
+	
+	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	svg.setAttribute("width", width);
+	svg.setAttribute("height", height);
+	document.body.appendChild(svg);
+	
+	function createCircle(id, position, r, color, alpha) {
+		var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		circle.setAttribute("id", id);
+		circle.setAttribute("cx", position.x);
+		circle.setAttribute("cy", position.y);
+		circle.setAttribute("r", r);
+		circle.setAttribute("fill", new String("rgb("+color.r+", "+color.g+", "+color.b+", "+alpha+")"));
+		circle.setAttribute("fill-opacity", alpha);
+		svg.appendChild(circle);
+		return circle;
+	}
+
+	function updateCircle(id, position, r, color, alpha) {
+		var circle = document.getElementById(id);
+		circle.setAttribute("cx", position.x);
+		circle.setAttribute("cy", position.y);
+		circle.setAttribute("r", r);
+		circle.setAttribute("fill", new String("rgb("+color.r+", "+color.g+", "+color.b+", "+alpha+")"));
+		circle.setAttribute("fill-opacity", alpha);
+	}
+	
+	var initialAcceleration = {x: 1, y: 0};
+	var initialVelocity = {x: 0, y: 0};
+	var initialPosition ={x: width / 2, y: height / 2};
+	
+	var jerk = {x: 1, y: 0};
+	var acceleration = {x: initialAcceleration.x, y: initialAcceleration.y};
+	var velocity = {x: initialVelocity.x, y: initialVelocity.y};
+	var position = {x: initialPosition.x, y: initialPosition.y};
+	
+	var circle = createCircle("circle", position, r, color, alpha);
+	
+	var t = 0;
+	var interval = setInterval(function(){
+		if (new Date().getTime() - starttime >= duration * 1000) {
+			console.log(t, acceleration, velocity, position);
+			//a=a0+jt, v=v0+a0t+jt²/2, x=x0+v0t+a0t²/2+jt³/6
+			console.log(t, {x: initialAcceleration.x+jerk.x*t, y: initialAcceleration.y+jerk.y*t}, {x: initialVelocity.x+initialAcceleration.x*t+jerk.x*t*t/2, y: initialVelocity.y+initialAcceleration.y*t+jerk.y*t*t/2}, {x: initialPosition.x+initialVelocity.x*t+initialAcceleration.x*t*t/2+jerk.x*t*t*t/6, y: initialPosition.y+initialVelocity.y*t+initialAcceleration.y*t*t/2+jerk.y*t*t*t/6});
+			clearInterval(interval);
+		}
+		//console.log(t, acceleration, velocity, position);
+		var prevAcceleration = {x: acceleration.x, y: acceleration.y};
+		acceleration.x += jerk.x*dt;
+		acceleration.y += jerk.y*dt;
+		var nextAcceleration = {x: acceleration.x, y: acceleration.y};
+		
+		var prevVelocity = {x: velocity.x, y: velocity.y};
+		velocity.x += (prevAcceleration.x+nextAcceleration.x)/2*dt;
+		velocity.y += (prevAcceleration.y+nextAcceleration.y)/2*dt;
+		var nextVelocity = {x: velocity.x, y: velocity.y};
+		
+		position.x += (prevVelocity.x+nextVelocity.x)/2*dt;
+		position.y += (prevVelocity.y+nextVelocity.y)/2*dt;
+		createCircle("circle", position, r, color, alpha);
+		t+=dt;
+	}, 1000*dt);
+</script>
+</body>
+</html>
