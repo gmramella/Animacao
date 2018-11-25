@@ -55,7 +55,7 @@ Abrir particles.html
 | r | partículas em forma de rect |
 | b | trajetória bézier |
 | l | trajetória linear |
-| s | trajetória piral |
+| s | trajetória espiral |
 | q | diminui quantidade de ondas, min 1 |
 | w | aumenta quantidade de ondas, max 10 |
 | o | emissor quadrado |
@@ -70,7 +70,7 @@ Abrir particles.html
 | 6 | aumenta valor do campo b da cor, overflow vai pra 0 |
 | espaço | bool se destrói sistemas de partículas existentes ou não |
 
-| Comando | Descrição |
+| Comando | Default |
 | --- | --- |
 | forma das partículas | circle |
 | trajetória | linear |
